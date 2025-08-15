@@ -16,7 +16,9 @@ export const config = {
 // Helper function to get full URL for uploads
 export const getUploadUrl = (path) => {
   if (!path) return ''
+  // If it's already a full URL (Cloudinary), return as is
   if (path.startsWith('http')) return path
+  // For local uploads (fallback)
   if (path.startsWith('/uploads/')) {
     return `${config.UPLOADS_URL}${path}`
   }

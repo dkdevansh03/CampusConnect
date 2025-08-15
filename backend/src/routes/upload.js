@@ -1,20 +1,28 @@
 import express from 'express';
 import multer from 'multer';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import cloudinary from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const uploadDir = path.join(__dirname, '../../', process.env.UPLOAD_DIR || 'uploads');
+// Configure Cloudinary
+cloudinary.v2.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadDir),
-  filename: (req, file, cb) => {
-    const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, unique + path.extname(file.originalname));
+// Configure Cloudinary Storage
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary.v2,
+  params: {
+    folder: 'campusconnect',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'pdf'],
+    transformation: [
+      { width: 1000, height: 1000, crop: 'limit' }, // Limit image size
+      { quality: 'auto' } // Auto optimize quality
+    ]
   }
 });
 
@@ -24,11 +32,21 @@ const fileFilter = (req, file, cb) => {
   else cb(new Error('Only images (jpg,png,webp) and PDFs are allowed'));
 };
 
-const upload = multer({ storage, fileFilter, limits: { fileSize: 10 * 1024 * 1024 } }); // 10MB
+const upload = multer({ 
+  storage, 
+  fileFilter, 
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB
+});
 
 router.post('/', requireAuth, upload.single('file'), (req, res) => {
-  const url = `/uploads/${req.file.filename}`;
-  res.status(201).json({ url });
+  try {
+    // Return the Cloudinary URL
+    const url = req.file.path;
+    res.status(201).json({ url });
+  } catch (error) {
+    console.error('Upload error:', error);
+    res.status(500).json({ message: 'Upload failed' });
+  }
 });
 
 export default router;
