@@ -1,16 +1,16 @@
 // Configuration file for the application
 export const config = {
-  // Backend API URL
-  BACKEND_URL: 'http://localhost:5000',
+  // Backend API URL - use environment variable or fallback to localhost
+  BACKEND_URL: import.meta.env.VITE_API_URL || 'http://localhost:4000',
   
-  // Frontend URL
-  FRONTEND_URL: 'http://localhost:3000',
+  // Frontend URL - use environment variable or fallback to localhost
+  FRONTEND_URL: import.meta.env.VITE_FRONTEND_URL || 'http://localhost:3000',
   
-  // Uploads URL (for file access)
-  UPLOADS_URL: 'http://localhost:5000',
+  // Uploads URL (for file access) - use environment variable or fallback to localhost
+  UPLOADS_URL: import.meta.env.VITE_API_URL || 'http://localhost:4000',
   
-  // API endpoints
-  API_BASE: 'http://localhost:5000',
+  // API endpoints - use environment variable or fallback to localhost
+  API_BASE: import.meta.env.VITE_API_URL || 'http://localhost:4000',
 }
 
 // Helper function to get full URL for uploads
