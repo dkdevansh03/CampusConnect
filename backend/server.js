@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import path from 'path';
 import { fileURLToPath } from 'url';
 
 import authRoutes from './src/routes/auth.js';
