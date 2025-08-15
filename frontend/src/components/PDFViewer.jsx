@@ -12,6 +12,36 @@ export default function PDFViewer({ url, filename }) {
   // Debug logging
   console.log('PDFViewer props:', { url, filename, fullUrl, isFileAccessible })
 
+  const handleDownload = async (e) => {
+    e.preventDefault()
+    
+    try {
+      if (fullUrl.includes('cloudinary.com')) {
+        // For Cloudinary URLs, fetch the file and download as blob
+        const response = await fetch(fullUrl)
+        const blob = await response.blob()
+        
+        // Create download link
+        const downloadUrl = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = downloadUrl
+        link.download = filename || 'document.pdf'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        
+        // Clean up
+        window.URL.revokeObjectURL(downloadUrl)
+      } else {
+        // For other URLs, use normal download
+        window.open(fullUrl, '_blank')
+      }
+    } catch (error) {
+      console.error('Download failed:', error)
+      alert('Download failed. Please try again.')
+    }
+  }
+
   if (!isFileAccessible) {
     return (
       <div className="relative">
@@ -51,25 +81,13 @@ export default function PDFViewer({ url, filename }) {
             </p>
           </div>
           <div className="flex gap-1 flex-shrink-0">
-            <a
-              href={fullUrl}
-              download={filename || 'document.pdf'}
+            <button
+              onClick={handleDownload}
               className="p-2 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-200 dark:hover:bg-green-800/50 transition-colors"
               title="Download PDF"
-              onClick={(e) => {
-                // Force download by creating a temporary link
-                e.preventDefault()
-                const link = document.createElement('a')
-                link.href = fullUrl
-                link.download = filename || 'document.pdf'
-                link.target = '_blank'
-                document.body.appendChild(link)
-                link.click()
-                document.body.removeChild(link)
-              }}
             >
               <FiDownload className="w-4 h-4" />
-            </a>
+            </button>
           </div>
         </div>
       </div>

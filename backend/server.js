@@ -37,9 +37,11 @@ mongoose.connect(MONGO_URI).then(() => {
 // Middlewares
 app.use(helmet());
 app.use(cors({ 
-  origin: process.env.NODE_ENV === 'production' 
-    ? [CLIENT_URL, 'https://campusconnect-frontend.vercel.app', 'https://campus-connect-seven-ruby.vercel.app'] 
-    : CLIENT_URL, 
+  origin: [
+    'http://localhost:3000',
+    'https://campusconnect-frontend.vercel.app',
+    'https://campus-connect-seven-ruby.vercel.app'
+  ], 
   credentials: true 
 }));
 app.use(express.json({ limit: '10mb' }));
@@ -48,6 +50,7 @@ app.use(morgan('dev'));
 
 // Routes
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
+app.get('/api/test-cors', (req, res) => res.json({ message: 'CORS is working!', timestamp: new Date().toISOString() }));
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
