@@ -2,6 +2,24 @@ import { useState } from 'react'
 import { FiFile, FiDownload } from 'react-icons/fi'
 
 export default function PDFViewer({ url, filename }) {
+  const handleOpenPDF = () => {
+    // Force open PDF in new tab
+    if (url) {
+      const newWindow = window.open()
+      if (newWindow) {
+        newWindow.document.write(`
+          <html>
+            <head><title>${filename || 'PDF Document'}</title></head>
+            <body style="margin:0;padding:0;">
+              <iframe src="${url}" width="100%" height="100%" style="border:none;"></iframe>
+            </body>
+          </html>
+        `)
+        newWindow.document.close()
+      }
+    }
+  }
+
   return (
     <div className="relative">
       {/* PDF Preview Card - Compact Version */}
@@ -17,17 +35,18 @@ export default function PDFViewer({ url, filename }) {
             <p className="text-xs text-gray-500 dark:text-gray-400">
               PDF Document
             </p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 truncate">
+              {url}
+            </p>
           </div>
           <div className="flex gap-1 flex-shrink-0">
-            <a
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              onClick={handleOpenPDF}
               className="p-2 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-200 dark:hover:bg-green-800/50 transition-colors"
               title="Open PDF in new tab"
             >
               <FiDownload className="w-4 h-4" />
-            </a>
+            </button>
           </div>
         </div>
       </div>
