@@ -39,7 +39,7 @@ mongoose.connect(MONGO_URI).then(() => {
 app.use(helmet());
 app.use(cors({ 
   origin: process.env.NODE_ENV === 'production' 
-    ? [CLIENT_URL, 'https://campusconnect-frontend.vercel.app'] 
+    ? [CLIENT_URL, 'https://campusconnect-frontend.vercel.app', 'https://campus-connect-seven-ruby.vercel.app'] 
     : CLIENT_URL, 
   credentials: true 
 }));
