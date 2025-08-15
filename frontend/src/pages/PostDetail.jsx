@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import api from '../api/client.js'
 import { FiUser, FiClock, FiTag, FiFile, FiMessageCircle, FiArrowLeft, FiSend } from 'react-icons/fi'
 import PDFViewer from '../components/PDFViewer.jsx'
+import { getUploadUrl } from '../config/config.js'
 
 export default function PostDetail() {
   const { id } = useParams()
@@ -53,7 +54,8 @@ export default function PostDetail() {
     }
   }
 
-  const renderAttachment = (url, index) => {
+  const renderAttachment = (rawUrl, index) => {
+    const url = getUploadUrl(rawUrl)
     // Check if it's an image
     if (url.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
       return (

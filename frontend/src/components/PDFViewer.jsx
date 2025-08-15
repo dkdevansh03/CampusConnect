@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { FiFile, FiDownload } from 'react-icons/fi'
+import { getUploadUrl } from '../config/config.js'
 
 export default function PDFViewer({ url, filename }) {
+  const resolvedUrl = getUploadUrl(url)
   return (
     <div className="relative">
       {/* PDF Preview Card - Compact Version */}
@@ -20,8 +22,9 @@ export default function PDFViewer({ url, filename }) {
           </div>
           <div className="flex gap-1 flex-shrink-0">
             <a
-              href={url}
+              href={resolvedUrl}
               target="_blank"
+              rel="noreferrer"
               className="p-2 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-200 dark:hover:bg-green-800/50 transition-colors"
               title="Open PDF in new tab"
             >
