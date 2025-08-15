@@ -17,10 +17,14 @@ export const config = {
 export const getUploadUrl = (path) => {
   if (!path) return ''
   
-  // If it's already a full URL (Cloudinary), return as is
+  // If it's already a full URL, return as is
   if (path.startsWith('http')) return path
   
-  // For any other path, just return as is
+  // For local uploads, combine with backend URL
+  if (path.startsWith('/uploads/')) {
+    return `${config.BACKEND_URL}${path}`
+  }
+  
   return path
 }
 

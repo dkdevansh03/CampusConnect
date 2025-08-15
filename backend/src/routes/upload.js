@@ -1,36 +1,21 @@
 import express from 'express';
 import multer from 'multer';
-import cloudinary from 'cloudinary';
-import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// Configure Cloudinary
-cloudinary.v2.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
-});
-
-// Configure Cloudinary Storage
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary.v2,
-  params: {
-    folder: 'campusconnect',
-    allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'pdf'],
-    // Only apply transformations to images, not PDFs
-    transformation: (req, file) => {
-      // If it's an image, apply transformations
-      if (file.mimetype.startsWith('image/')) {
-        return [
-          { width: 1000, height: 1000, crop: 'limit' },
-          { quality: 'auto' }
-        ]
-      }
-      // For PDFs, return no transformations
-      return []
-    }
+// Configure local storage for now
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, '../../uploads'));
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + '-' + file.originalname);
   }
 });
 
@@ -48,8 +33,8 @@ const upload = multer({
 
 router.post('/', requireAuth, upload.single('file'), (req, res) => {
   try {
-    // Return the Cloudinary URL
-    const url = req.file.path;
+    // Return the local file path
+    const url = `/uploads/${req.file.filename}`;
     res.status(201).json({ url });
   } catch (error) {
     console.error('Upload error:', error);
