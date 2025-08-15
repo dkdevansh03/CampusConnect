@@ -19,10 +19,18 @@ const storage = new CloudinaryStorage({
   params: {
     folder: 'campusconnect',
     allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'pdf'],
-    transformation: [
-      { width: 1000, height: 1000, crop: 'limit' }, // Limit image size
-      { quality: 'auto' } // Auto optimize quality
-    ]
+    // Only apply transformations to images, not PDFs
+    transformation: (req, file) => {
+      // If it's an image, apply transformations
+      if (file.mimetype.startsWith('image/')) {
+        return [
+          { width: 1000, height: 1000, crop: 'limit' },
+          { quality: 'auto' }
+        ]
+      }
+      // For PDFs, return no transformations
+      return []
+    }
   }
 });
 
