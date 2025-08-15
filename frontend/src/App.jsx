@@ -38,6 +38,13 @@ export default function App() {
           <Route path="*" element={<div className="text-center py-20 text-xl font-semibold">404 - Page Not Found</div>} />
         </Routes>
       </div>
+      
+      {/* Developer Credit Footer */}
+      <footer className="text-center py-6 border-t border-gray-200 dark:border-gray-700 mt-20">
+        <p className="text-gray-600 dark:text-gray-400 text-sm">
+          Developed by <span className="font-semibold text-blue-600 dark:text-blue-400">DEVANSH GUPTA</span>
+        </p>
+      </footer>
     </div>
   )
 }
