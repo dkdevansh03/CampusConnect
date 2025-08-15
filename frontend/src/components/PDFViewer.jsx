@@ -2,22 +2,6 @@ import { useState } from 'react'
 import { FiFile, FiDownload } from 'react-icons/fi'
 
 export default function PDFViewer({ url, filename }) {
-  // Debug logging
-  console.log('PDFViewer - Raw URL:', url)
-  console.log('PDFViewer - Filename:', filename)
-
-  const handleDownload = () => {
-    console.log('Download clicked! URL:', url)
-    
-    if (url && url.startsWith('http')) {
-      console.log('Opening URL in new tab:', url)
-      window.open(url, '_blank', 'noopener,noreferrer')
-    } else {
-      console.error('Invalid URL:', url)
-      alert('PDF URL is invalid. Please check the file.')
-    }
-  }
-
   return (
     <div className="relative">
       {/* PDF Preview Card - Compact Version */}
@@ -33,18 +17,17 @@ export default function PDFViewer({ url, filename }) {
             <p className="text-xs text-gray-500 dark:text-gray-400">
               PDF Document
             </p>
-            <p className="text-xs text-gray-400 dark:text-gray-500 truncate">
-              {url}
-            </p>
           </div>
           <div className="flex gap-1 flex-shrink-0">
-            <button
-              onClick={handleDownload}
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
               className="p-2 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-200 dark:hover:bg-green-800/50 transition-colors"
               title="Open PDF in new tab"
             >
               <FiDownload className="w-4 h-4" />
-            </button>
+            </a>
           </div>
         </div>
       </div>
