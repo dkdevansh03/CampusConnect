@@ -5,6 +5,7 @@ import Feed from './pages/Feed.jsx'
 import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 import CreatePost from './pages/CreatePost.jsx'
+import EditPost from './pages/EditPost.jsx'
 import PostDetail from './pages/PostDetail.jsx'
 import Events from './pages/Events.jsx'
 import Messages from './pages/Messages.jsx'
@@ -23,6 +24,7 @@ export default function App() {
           <Route path="/feed" element={<ProtectedRoute><Feed/></ProtectedRoute>} />
           <Route path="/posts/:id" element={<ProtectedRoute><PostDetail/></ProtectedRoute>} />
           <Route path="/create" element={<ProtectedRoute><CreatePost/></ProtectedRoute>} />
+          <Route path="/edit-post" element={<ProtectedRoute><EditPost/></ProtectedRoute>} />
           <Route path="/events" element={<ProtectedRoute><Events/></ProtectedRoute>} />
           <Route path="/messages" element={<ProtectedRoute><Messages/></ProtectedRoute>} />
           <Route path="/admin" element={

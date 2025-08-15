@@ -47,8 +47,16 @@ router.get('/:id', requireAuth, async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-// Admin: list users
-router.get('/', requireAuth, requireRole('admin'), async (req, res, next) => {
+// Get all users (for messaging - public list)
+router.get('/', requireAuth, async (req, res, next) => {
+  try {
+    const users = await User.find().select('-password -email').sort({ name: 1 });
+    res.json({ users });
+  } catch (err) { next(err); }
+});
+
+// Admin: list users with full details
+router.get('/admin/list', requireAuth, requireRole('admin'), async (req, res, next) => {
   try {
     const users = await User.find().select('-password').sort({ createdAt: -1 });
     res.json({ users });

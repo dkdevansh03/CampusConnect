@@ -23,7 +23,7 @@ export default function Admin() {
 
   async function loadUsers() {
     try {
-      const { data } = await api.get('/users')
+      const { data } = await api.get('/users/admin/list')
       setUsers(data.users || [])
     } catch (e) { console.error(e) }
   }

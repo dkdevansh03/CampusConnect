@@ -1,8 +1,33 @@
 import { Link } from 'react-router-dom'
-import { FiUser, FiClock, FiTag, FiFile, FiArrowRight, FiImage } from 'react-icons/fi'
+import { useState, useEffect, useRef } from 'react'
+import { useAuth } from '../context/AuthContext.jsx'
+import { FiUser, FiClock, FiTag, FiFile, FiArrowRight, FiImage, FiMoreVertical, FiEdit, FiTrash2 } from 'react-icons/fi'
 import PDFViewer from './PDFViewer.jsx'
 
-export default function PostCard({ post }) {
+export default function PostCard({ post, onDelete, onEdit }) {
+  const { user } = useAuth()
+  const [showMenu, setShowMenu] = useState(false)
+  const menuRef = useRef()
+  
+  const canEdit = user?._id === post.author?._id || user?.role === 'admin'
+  const canDelete = user?._id === post.author?._id || user?.role === 'admin'
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowMenu(false)
+      }
+    }
+    
+    if (showMenu) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showMenu])
   const getRoleColor = (role) => {
     switch(role) {
       case 'admin': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
@@ -59,9 +84,54 @@ export default function PostCard({ post }) {
             </div>
           </div>
         </div>
-        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getRoleColor(post.author?.role)}`}>
-          {post.author?.role}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getRoleColor(post.author?.role)}`}>
+            {post.author?.role}
+          </span>
+          
+          {/* Edit/Delete Menu */}
+          {(canEdit || canDelete) && (
+            <div className="relative" ref={menuRef}>
+              <button
+                onClick={() => setShowMenu(!showMenu)}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                <FiMoreVertical className="w-4 h-4 text-gray-500" />
+              </button>
+              
+              {showMenu && (
+                <div className="absolute right-0 top-full mt-1 w-32 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10">
+                  {canEdit && (
+                    <button
+                      onClick={() => {
+                        setShowMenu(false)
+                        onEdit?.(post)
+                      }}
+                      className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+                    >
+                      <FiEdit className="w-4 h-4" />
+                      Edit
+                    </button>
+                  )}
+                  {canDelete && (
+                    <button
+                      onClick={() => {
+                        setShowMenu(false)
+                        if (window.confirm('Are you sure you want to delete this post?')) {
+                          onDelete?.(post._id)
+                        }
+                      }}
+                      className="w-full px-3 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 flex items-center gap-2"
+                    >
+                      <FiTrash2 className="w-4 h-4" />
+                      Delete
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="mb-4">

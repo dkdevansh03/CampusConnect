@@ -36,4 +36,38 @@ router.get('/me', requireAuth, async (req, res) => {
   res.json({ user: req.user });
 });
 
+// Change password
+router.patch('/change-password', requireAuth, async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: 'Current password and new password are required' });
+    }
+    
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: 'New password must be at least 6 characters long' });
+    }
+    
+    // Verify current password
+    const user = await User.findById(req.user._id);
+    const isCurrentPasswordValid = await user.comparePassword(currentPassword);
+    
+    if (!isCurrentPasswordValid) {
+      return res.status(401).json({ message: 'Current password is incorrect' });
+    }
+    
+    // Hash new password
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    
+    // Update password
+    user.password = hashedNewPassword;
+    await user.save();
+    
+    res.json({ message: 'Password changed successfully' });
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default router;

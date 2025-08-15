@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import api from '../api/client.js'
 import PostCard from '../components/PostCard.jsx'
 import { FiSearch, FiFilter, FiRefreshCw } from 'react-icons/fi'
 
 export default function Feed() {
+  const navigate = useNavigate()
   const [posts, setPosts] = useState([])
   const [q, setQ] = useState('')
   const [tag, setTag] = useState('')
@@ -22,6 +24,24 @@ export default function Feed() {
   }
 
   useEffect(() => { load() }, [])
+
+  // Handle post edit
+  const handleEdit = (post) => {
+    // Navigate to edit page with post data
+    navigate('/edit-post', { state: { post } })
+  }
+
+  // Handle post delete
+  const handleDelete = async (postId) => {
+    try {
+      await api.delete(`/posts/${postId}`)
+      // Remove post from list
+      setPosts(posts.filter(post => post._id !== postId))
+    } catch (error) {
+      console.error('Failed to delete post:', error)
+      alert('Failed to delete post')
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -82,7 +102,14 @@ export default function Feed() {
       <div className="space-y-6">
         {posts.length > 0 ? (
           <div className="grid gap-6">
-            {posts.map(post => <PostCard key={post._id} post={post} />)}
+            {posts.map(post => (
+              <PostCard 
+                key={post._id} 
+                post={post} 
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+            ))}
           </div>
         ) : (
           <div className="text-center py-16">

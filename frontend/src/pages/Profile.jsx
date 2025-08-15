@@ -1,8 +1,11 @@
+import { useState } from 'react'
 import { useAuth } from '../context/AuthContext.jsx'
 import { FiUser, FiMail, FiAward, FiCalendar, FiShield } from 'react-icons/fi'
+import ChangePasswordModal from '../components/ChangePasswordModal.jsx'
 
 export default function Profile() {
   const { user } = useAuth()
+  const [showChangePassword, setShowChangePassword] = useState(false)
   
   if (!user) return null
 
@@ -149,16 +152,22 @@ export default function Profile() {
               <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl">
                 Edit Profile
               </button>
-              <button className="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+              <button 
+                onClick={() => setShowChangePassword(true)}
+                className="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
                 Change Password
-              </button>
-              <button className="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                Privacy Settings
               </button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Change Password Modal */}
+      <ChangePasswordModal 
+        isOpen={showChangePassword}
+        onClose={() => setShowChangePassword(false)}
+      />
     </div>
   )
 }
