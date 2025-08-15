@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js",
-    "seed:admin": "node src/seed/createAdmin.js"
+    "seed:admin": "node src/seed/createAdmin.js",
+    "migrate:files": "node src/scripts/migrateFiles.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

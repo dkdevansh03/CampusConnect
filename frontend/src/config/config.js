@@ -16,12 +16,20 @@ export const config = {
 // Helper function to get full URL for uploads
 export const getUploadUrl = (path) => {
   if (!path) return ''
+  
   // If it's already a full URL (Cloudinary), return as is
   if (path.startsWith('http')) return path
-  // For local uploads (fallback)
+  
+  // For old local uploads that might still exist in database
   if (path.startsWith('/uploads/')) {
+    // In production, these files won't exist, so we'll return a placeholder
+    if (import.meta.env.PROD) {
+      console.warn('Attempting to access local file in production:', path)
+      return '' // Return empty string for missing files
+    }
     return `${config.UPLOADS_URL}${path}`
   }
+  
   return path
 }
 

@@ -1,0 +1,10 @@
+[33m6258e5c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m new features
+[33m4ef77a5[m Add Cloudinary file upload support for production
+[33m2711dd0[m Fix CORS configuration for frontend domain
+[33m35d56a3[m Add debug logging for registration API calls
+[33m866201f[m Fix Vite build permission issue by using node directly
+[33mfadd22f[m Move vercel.json to frontend directory for proper deployment
+[33m4f17240[m Fix Vercel build command and remove workspaces
+[33m846ec2a[m Fix Vercel deployment configuration and add deployment guide
+[33mb40747a[m Prepare frontend for Vercel deployment
+[33mb0e2746[m initial commit
