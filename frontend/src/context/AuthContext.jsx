@@ -32,10 +32,18 @@ export function AuthProvider({ children }) {
   }
 
   const register = async (payload) => {
-    const { data } = await api.post('/auth/register', payload)
-    setToken(data.token)
-    setUser(data.user)
-    return data.user
+    try {
+      console.log('Registering with payload:', payload)
+      console.log('API URL:', import.meta.env.VITE_API_URL)
+      const { data } = await api.post('/auth/register', payload)
+      setToken(data.token)
+      setUser(data.user)
+      return data.user
+    } catch (error) {
+      console.error('Registration error:', error)
+      console.error('Error response:', error.response)
+      throw error
+    }
   }
 
   const logout = () => { setToken(null); setUser(null) }

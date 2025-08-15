@@ -1,5 +1,9 @@
 import axios from 'axios'
 
+// Debug logging
+console.log('VITE_API_URL:', import.meta.env.VITE_API_URL)
+console.log('Base URL:', import.meta.env.VITE_API_URL?.replace(/\/$/, '') + '/api')
+
 const instance = axios.create({
   baseURL: import.meta.env.VITE_API_URL?.replace(/\/$/, '') + '/api'
 })
