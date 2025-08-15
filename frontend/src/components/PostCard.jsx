@@ -38,6 +38,8 @@ export default function PostCard({ post, onDelete, onEdit }) {
   }
 
   const renderAttachment = (url, index) => {
+    console.log(`Rendering attachment ${index}:`, url)
+    
     // Check if it's an image
     if (url.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
       return (
@@ -49,6 +51,7 @@ export default function PostCard({ post, onDelete, onEdit }) {
     
     // Check if it's a PDF
     if (url.match(/\.pdf$/i)) {
+      console.log(`PDF detected for attachment ${index}:`, url)
       return (
         <div key={index} className="w-full">
           <PDFViewer url={url} filename={`Document ${index + 1}`} />

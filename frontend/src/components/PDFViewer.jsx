@@ -1,27 +1,20 @@
 import { useState } from 'react'
 import { FiFile, FiDownload } from 'react-icons/fi'
-import { getUploadUrl } from '../config/config.js'
 
 export default function PDFViewer({ url, filename }) {
-  // Get full URL for PDF using config
-  const fullUrl = getUploadUrl(url)
-
   // Debug logging
-  console.log('PDFViewer Debug:', { 
-    originalUrl: url, 
-    filename, 
-    fullUrl,
-    isCloudinary: fullUrl?.includes('cloudinary.com'),
-    isHttp: fullUrl?.startsWith('http')
-  })
+  console.log('PDFViewer - Raw URL:', url)
+  console.log('PDFViewer - Filename:', filename)
 
   const handleDownload = () => {
-    console.log('Download clicked for:', fullUrl)
-    if (fullUrl) {
-      // Open PDF in new tab
-      window.open(fullUrl, '_blank')
+    console.log('Download clicked! URL:', url)
+    
+    if (url && url.startsWith('http')) {
+      console.log('Opening URL in new tab:', url)
+      window.open(url, '_blank', 'noopener,noreferrer')
     } else {
-      console.error('No valid URL to open')
+      console.error('Invalid URL:', url)
+      alert('PDF URL is invalid. Please check the file.')
     }
   }
 
@@ -39,6 +32,9 @@ export default function PDFViewer({ url, filename }) {
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400">
               PDF Document
+            </p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 truncate">
+              {url}
             </p>
           </div>
           <div className="flex gap-1 flex-shrink-0">
