@@ -7,7 +7,23 @@ export default function PDFViewer({ url, filename }) {
   const fullUrl = getUploadUrl(url)
 
   // Debug logging
-  console.log('PDFViewer props:', { url, filename, fullUrl })
+  console.log('PDFViewer Debug:', { 
+    originalUrl: url, 
+    filename, 
+    fullUrl,
+    isCloudinary: fullUrl?.includes('cloudinary.com'),
+    isHttp: fullUrl?.startsWith('http')
+  })
+
+  const handleDownload = () => {
+    console.log('Download clicked for:', fullUrl)
+    if (fullUrl) {
+      // Open PDF in new tab
+      window.open(fullUrl, '_blank')
+    } else {
+      console.error('No valid URL to open')
+    }
+  }
 
   return (
     <div className="relative">
@@ -26,15 +42,13 @@ export default function PDFViewer({ url, filename }) {
             </p>
           </div>
           <div className="flex gap-1 flex-shrink-0">
-            <a
-              href={fullUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              onClick={handleDownload}
               className="p-2 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-200 dark:hover:bg-green-800/50 transition-colors"
               title="Open PDF in new tab"
             >
               <FiDownload className="w-4 h-4" />
-            </a>
+            </button>
           </div>
         </div>
       </div>

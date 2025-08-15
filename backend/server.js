@@ -42,13 +42,16 @@ app.use(cors({
     'https://campusconnect-frontend.vercel.app',
     'https://campus-connect-seven-ruby.vercel.app'
   ], 
-  credentials: true 
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
 // Routes
+app.get('/', (req, res) => res.json({ message: 'CampusConnect Backend is running!', timestamp: new Date().toISOString() }));
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 app.get('/api/test-cors', (req, res) => res.json({ message: 'CORS is working!', timestamp: new Date().toISOString() }));
 app.use('/api/auth', authRoutes);
