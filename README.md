@@ -9,7 +9,7 @@ A full-stack social media platform designed for campus communities to connect, s
 - **Comments** - Threaded commenting system on posts
 - **Events** - Campus event management and discovery
 - **Messages** - Real-time messaging between users
-- **File Uploads** - Support for images and PDFs via Cloudinary
+- **File Uploads** - Support for images and PDFs via local storage
 - **Search & Filter** - Text search and tag-based filtering
 - **Dark Mode** - Toggle between light and dark themes
 - **Responsive Design** - Mobile-first design with Tailwind CSS
@@ -32,7 +32,6 @@ A full-stack social media platform designed for campus communities to connect, s
 - **JWT** - Authentication tokens
 - **bcryptjs** - Password hashing
 - **Multer** - File upload middleware
-- **Cloudinary** - Cloud file storage
 - **Helmet** - Security middleware
 - **CORS** - Cross-origin resource sharing
 - **Morgan** - HTTP request logger
@@ -65,7 +64,6 @@ CampusConnect/
 ### Prerequisites
 - Node.js (v16 or higher)
 - MongoDB (local or MongoDB Atlas)
-- Cloudinary account (for file uploads)
 
 ### Installation
 
@@ -93,9 +91,6 @@ CampusConnect/
    PORT=4000
    MONGO_URI=mongodb://localhost:27017/campusconnect
    JWT_SECRET=your-jwt-secret
-   CLOUDINARY_CLOUD_NAME=your-cloudinary-name
-   CLOUDINARY_API_KEY=your-cloudinary-key
-   CLOUDINARY_API_SECRET=your-cloudinary-secret
    CLIENT_URL=http://localhost:3000
    ```
 
@@ -150,27 +145,17 @@ CampusConnect/
 - `POST /api/events` - Create event
 
 ### File Upload
-- `POST /api/upload` - Upload files to Cloudinary
-
-### Messages
-- `GET /api/messages` - Get user messages
-- `POST /api/messages` - Send message
+- `POST /api/upload` - Upload files to Supabase Storage
 
 ## 🔧 Configuration
 
-### Cloudinary Setup
-1. Create account at [cloudinary.com](https://cloudinary.com)
-2. Get your cloud name, API key, and API secret
-3. Add credentials to backend `.env`
-4. For PDFs: Upload as resource type "raw"
-5. Set files to "Public" access
-
-### Database Migration
-If upgrading from local file storage:
-```bash
-cd backend
-npm run migrate:files
-```
+### Supabase Storage Setup
+1. Create a project at [supabase.com](https://supabase.com/)
+2. Create a bucket named `uploads`
+3. Add these environment variables to backend:
+   - SUPABASE_URL
+   - SUPABASE_SERVICE_ROLE_KEY
+4. Uploaded files are stored in Supabase Storage and served via public URLs.
 
 ## 🚀 Deployment
 
@@ -189,12 +174,11 @@ npm run migrate:files
 ## 🐛 Troubleshooting
 
 ### PDF Upload Issues
-- Ensure PDFs are uploaded as "raw" resource type in Cloudinary
-- Check file access is set to "Public"
-- Remove "Blocked for delivery" access control
+- Ensure the `/uploads` folder exists and is writable.
+- Check file access is set to public in your backend.
 
 ### CORS Errors
-- Add your frontend domain to backend CORS configuration
+- Add your frontend domain to backend CORS configuration.
 - Check environment variables are properly set
 
 ### Database Connection
@@ -207,6 +191,22 @@ npm run migrate:files
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit your changes (`git commit -m 'Add amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+
+## 👨‍💻 Author
+
+**DEVANSH GUPTA**  
+[GitHub Profile](https://github.com/dkdevansh03)
+
+---
+
+*Built with ❤️ for campus communities*
+*Built with ❤️ for campus communities*
+*Built with ❤️ for campus communities*
 5. Open a Pull Request
 
 ## 📝 License

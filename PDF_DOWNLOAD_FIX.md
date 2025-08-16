@@ -43,16 +43,16 @@ After switching to Cloudinary for file storage, PDF downloads are failing with 4
 
 1. **Check your database** for posts with attachments starting with `/uploads/`
 2. **Delete those posts** or remove the attachment arrays
-3. **Create new posts** with proper Cloudinary file uploads
+3. **Create new posts** with proper file uploads
 
 ### **Option 3: Fresh Start**
 
 1. **Clear all posts** from the database
-2. **Start fresh** with new posts using Cloudinary uploads
+2. **Start fresh** with new posts using local uploads
 
 ## 🔍 **Testing the Fix**
 
-1. **Upload a new PDF** - should work with Cloudinary
+1. **Upload a new PDF** - should work with local storage
 2. **Check old posts** - should show "File not accessible" instead of 404
 3. **New uploads** - should work perfectly
 
@@ -61,9 +61,7 @@ After switching to Cloudinary for file storage, PDF downloads are failing with 4
 Make sure these are set in Render:
 
 ```bash
-CLOUDINARY_CLOUD_NAME=your-cloud-name
-CLOUDINARY_API_KEY=your-api-key
-CLOUDINARY_API_SECRET=your-api-secret
+# No Cloudinary variables needed for local storage
 ```
 
 ## 🚀 **Deploy Changes**
@@ -82,7 +80,9 @@ CLOUDINARY_API_SECRET=your-api-secret
 
 ## ✅ **Result**
 
-- ✅ **New PDF uploads** work perfectly with Cloudinary
+- ✅ **New PDF uploads** work perfectly with local storage
 - ✅ **Old broken files** show graceful error messages
+- ✅ **No more 404 errors** for missing files
+- ✅ **Clean database** without broken references
 - ✅ **No more 404 errors** for missing files
 - ✅ **Clean database** without broken references

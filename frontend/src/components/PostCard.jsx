@@ -43,14 +43,12 @@ export default function PostCard({ post, onDelete, onEdit }) {
     return url;
   };
 
-  const renderAttachment = (rawUrl, index) => {
-    const url = getUploadUrl(rawUrl);
-
+  const renderAttachment = (url, index) => {
     // PDF detect
     if (url.endsWith('.pdf')) {
       return (
         <div key={index} className="w-full">
-          <PDFViewer url={url} filename={`Document ${index + 1}`} />
+          <PDFViewer url={url} filename={`Document ${index + 1}.pdf`} />
         </div>
       );
     }
@@ -161,5 +159,7 @@ export default function PostCard({ post, onDelete, onEdit }) {
         </span>
       </div>
     </div>
+  )
+}
   )
 }
