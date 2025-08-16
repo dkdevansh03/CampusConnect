@@ -8,11 +8,7 @@ function openPdfInNewTab(fileUrl) {
         fileUrl = fileUrl.replace('/image/upload/', '/raw/upload/');
     }
     
-    // For PDFs: Add .pdf extension if missing
-    if (isPdf && fileUrl.includes('cloudinary.com') && !fileUrl.endsWith('.pdf')) {
-        fileUrl += '.pdf';
-    }
-    
+    // For PDFs: Don't add .pdf extension - let Cloudinary handle it
     // For images: Keep as is (they should use /image/upload/)
     // For other files: Open as is
     
@@ -25,9 +21,31 @@ function openFileInNewTab(fileUrl) {
 }
 
 function downloadFile(fileUrl, filename) {
+    // Create Cloudinary download URL with fl_attachment parameter
+    let downloadUrl = fileUrl;
+    
+    if (fileUrl.includes('cloudinary.com')) {
+        const parts = fileUrl.split('/');
+        const uploadIndex = parts.findIndex(part => part === 'upload');
+        
+        if (uploadIndex !== -1) {
+            const beforeUpload = parts.slice(0, uploadIndex + 1);
+            const afterUpload = parts.slice(uploadIndex + 1);
+            
+            const safeFilename = (filename || 'download').replace(/[^a-zA-Z0-9.-]/g, '_');
+            
+            downloadUrl = [
+                ...beforeUpload,
+                `fl_attachment:${safeFilename}`,
+                ...afterUpload
+            ].join('/');
+        }
+    }
+    
     const link = document.createElement('a');
-    link.href = fileUrl;
+    link.href = downloadUrl;
     link.download = filename || 'download';
+    link.target = '_blank';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

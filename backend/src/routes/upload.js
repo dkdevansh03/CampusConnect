@@ -21,16 +21,12 @@ router.post('/', requireAuth, upload.single('file'), (req, res) => {
       size: req.file.size
     });
 
-    // Cloudinary raw PDFs don't always include .pdf in url, force it
+    // Don't modify the Cloudinary URL - let frontend handle download transformation
     let finalUrl = req.file.path;
-    if (isPdf && !finalUrl.endsWith('.pdf')) {
-      finalUrl += '.pdf';
-      console.log('Added .pdf extension to URL:', finalUrl);
-    }
 
     res.json({
       message: 'File uploaded successfully',
-      url: finalUrl, // always correct url
+      url: finalUrl, // original Cloudinary URL without .pdf
       filename: req.file.originalname,
       size: req.file.size,
       type: req.file.mimetype
