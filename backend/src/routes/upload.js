@@ -41,7 +41,7 @@ router.post('/', requireAuth, upload.single('file'), async (req, res) => {
     const result = await new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
-          resource_type: 'auto', // Automatically detect file type
+          resource_type: 'raw', // Automatically detect file type
           folder: 'campus-connect', // Organize files in a folder
           public_id: `${Date.now()}-${req.file.originalname.split('.')[0]}`,
         },
