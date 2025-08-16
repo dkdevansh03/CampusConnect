@@ -18,7 +18,13 @@ export const getUploadUrl = (path) => {
   if (!path) return ''
   
   // If it's already a full URL, return as is
-  if (path.startsWith('http')) return path
+  if (path.startsWith('http')) {
+    // Fix Cloudinary URLs - convert image upload to raw for PDFs
+    if (path.includes('cloudinary.com') && path.includes('/image/upload/') && path.endsWith('.pdf')) {
+      return path.replace('/image/upload/', '/raw/upload/')
+    }
+    return path
+  }
   
   // For local uploads, combine with backend URL
   if (path.startsWith('/uploads/')) {

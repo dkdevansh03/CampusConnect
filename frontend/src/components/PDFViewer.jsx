@@ -1,6 +1,18 @@
-import { FiFile, FiDownload } from 'react-icons/fi'
+import { FiFile, FiDownload, FiExternalLink } from 'react-icons/fi'
+import { getUploadUrl } from '../config/config.js'
 
 export default function PDFViewer({ url, filename }) {
+  const correctedUrl = getUploadUrl(url)
+
+  const openPdfInNewTab = () => {
+    // Final check to ensure we have the right URL format
+    let finalUrl = correctedUrl
+    if (finalUrl.includes('cloudinary.com/image/upload') && finalUrl.endsWith('.pdf')) {
+      finalUrl = finalUrl.replace('/image/upload/', '/raw/upload/')
+    }
+    window.open(finalUrl, '_blank')
+  }
+
   return (
     <div className="relative">
       {/* PDF Preview Card - Compact Version */}
@@ -18,15 +30,13 @@ export default function PDFViewer({ url, filename }) {
             </p>
           </div>
           <div className="flex gap-1 flex-shrink-0">
-            <a
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              onClick={openPdfInNewTab}
               className="p-2 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-200 dark:hover:bg-green-800/50 transition-colors"
               title="Open PDF in new tab"
             >
-              <FiDownload className="w-4 h-4" />
-            </a>
+              <FiExternalLink className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </div>
