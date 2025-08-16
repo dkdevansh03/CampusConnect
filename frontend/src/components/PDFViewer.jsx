@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { FiFile, FiDownload } from 'react-icons/fi'
 
 export default function PDFViewer({ url, filename }) {
@@ -22,11 +21,12 @@ export default function PDFViewer({ url, filename }) {
             <a
               href={url}
               target="_blank"
+              rel="noopener noreferrer"
               className="p-2 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-200 dark:hover:bg-green-800/50 transition-colors"
               title="Open PDF in new tab"
             >
-              <FiDownload className={`w-4 h-4 ${isDownloading ? 'animate-spin' : ''}`} />
-            </button>
+              <FiDownload className="w-4 h-4" />
+            </a>
           </div>
         </div>
       </div>
