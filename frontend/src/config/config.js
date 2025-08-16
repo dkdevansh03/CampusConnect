@@ -17,7 +17,7 @@ export const config = {
 export const getUploadUrl = (path) => {
   if (!path) return ''
   
-  // If it's already a full URL, return as is (but check for PDF conversion)
+  // If it's already a full URL, return as is
   if (path.startsWith('http')) {
     return path
   }
