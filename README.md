@@ -1,4 +1,4 @@
-# CampusConnect
+# CampusConnect - https://campus-connect-seven-ruby.vercel.app/
 
 A full-stack social media platform designed for campus communities to connect, share, and collaborate. Built with React, Node.js, and MongoDB.
 
