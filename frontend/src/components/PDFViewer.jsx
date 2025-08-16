@@ -2,32 +2,30 @@ import { FiFile, FiDownload, FiExternalLink } from 'react-icons/fi'
 import { getUploadUrl } from '../config/config.js'
 
 export default function PDFViewer({ url, filename }) {
-  const correctedUrl = getUploadUrl(url)
   
   const openPdfInNewTab = () => {
-    // Check if it's a PDF
-    const isPdf = url.toLowerCase().includes('.pdf') || url.toLowerCase().endsWith('.pdf');
-    
-    // Final check to ensure we have the right URL format for PDFs
-    let finalUrl = correctedUrl
-    if (isPdf && finalUrl.includes('cloudinary.com/image/upload') && finalUrl.endsWith('.pdf')) {
+    // Convert image upload URL to raw upload URL for PDFs
+    let finalUrl = url
+    if (finalUrl.includes('cloudinary.com/image/upload') && finalUrl.toLowerCase().includes('.pdf')) {
       finalUrl = finalUrl.replace('/image/upload/', '/raw/upload/')
     }
+    console.log('Opening PDF URL:', finalUrl) // Debug log
     window.open(finalUrl, '_blank')
   }
 
   const downloadPdf = () => {
-    // Create download with proper filename
-    let finalUrl = correctedUrl
-    const isPdf = url.toLowerCase().includes('.pdf') || url.toLowerCase().endsWith('.pdf');
-    
-    if (isPdf && finalUrl.includes('cloudinary.com/image/upload')) {
+    // Convert image upload URL to raw upload URL for PDFs
+    let finalUrl = url
+    if (finalUrl.includes('cloudinary.com/image/upload') && finalUrl.toLowerCase().includes('.pdf')) {
       finalUrl = finalUrl.replace('/image/upload/', '/raw/upload/')
     }
+    
+    console.log('Downloading PDF URL:', finalUrl) // Debug log
     
     const link = document.createElement('a')
     link.href = finalUrl
     link.download = filename ? (filename.endsWith('.pdf') ? filename : filename + '.pdf') : 'document.pdf'
+    link.target = '_blank' // Open in new tab if download fails
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
