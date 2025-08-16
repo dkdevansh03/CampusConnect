@@ -18,7 +18,7 @@ const storage = new CloudinaryStorage({
         folder: 'campus-connect',
         resource_type: 'raw',
         allowed_formats: ['pdf'],
-        public_id: `${Date.now()}-${file.originalname.replace(/\.[^/.]+$/, "")}.pdf`
+        public_id: `${Date.now()}-${file.originalname.replace(/\.[^/.]+$/, "")}`
       };
     } else {
       return {
