@@ -17,12 +17,8 @@ export const config = {
 export const getUploadUrl = (path) => {
   if (!path) return ''
   
-  // If it's already a full URL, return as is
+  // If it's already a full URL, return as is (but check for PDF conversion)
   if (path.startsWith('http')) {
-    // Fix Cloudinary URLs - convert image upload to raw for PDFs
-    if (path.includes('cloudinary.com') && path.includes('/image/upload/') && path.endsWith('.pdf')) {
-      return path.replace('/image/upload/', '/raw/upload/')
-    }
     return path
   }
   
@@ -36,6 +32,10 @@ export const getUploadUrl = (path) => {
 
 // Helper function to get full API URL
 export const getApiUrl = (endpoint) => {
+  if (!endpoint) return ''
+  if (endpoint.startsWith('http')) return endpoint
+  return `${config.API_BASE}${endpoint}`
+}
   if (!endpoint) return ''
   if (endpoint.startsWith('http')) return endpoint
   return `${config.API_BASE}${endpoint}`

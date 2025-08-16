@@ -3,14 +3,34 @@ import { getUploadUrl } from '../config/config.js'
 
 export default function PDFViewer({ url, filename }) {
   const correctedUrl = getUploadUrl(url)
-
+  
   const openPdfInNewTab = () => {
-    // Final check to ensure we have the right URL format
+    // Check if it's a PDF
+    const isPdf = url.toLowerCase().includes('.pdf') || url.toLowerCase().endsWith('.pdf');
+    
+    // Final check to ensure we have the right URL format for PDFs
     let finalUrl = correctedUrl
-    if (finalUrl.includes('cloudinary.com/image/upload') && finalUrl.endsWith('.pdf')) {
+    if (isPdf && finalUrl.includes('cloudinary.com/image/upload') && finalUrl.endsWith('.pdf')) {
       finalUrl = finalUrl.replace('/image/upload/', '/raw/upload/')
     }
     window.open(finalUrl, '_blank')
+  }
+
+  const downloadPdf = () => {
+    // Create download with proper filename
+    let finalUrl = correctedUrl
+    const isPdf = url.toLowerCase().includes('.pdf') || url.toLowerCase().endsWith('.pdf');
+    
+    if (isPdf && finalUrl.includes('cloudinary.com/image/upload')) {
+      finalUrl = finalUrl.replace('/image/upload/', '/raw/upload/')
+    }
+    
+    const link = document.createElement('a')
+    link.href = finalUrl
+    link.download = filename ? (filename.endsWith('.pdf') ? filename : filename + '.pdf') : 'document.pdf'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }
 
   return (
@@ -32,10 +52,17 @@ export default function PDFViewer({ url, filename }) {
           <div className="flex gap-1 flex-shrink-0">
             <button
               onClick={openPdfInNewTab}
-              className="p-2 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-200 dark:hover:bg-green-800/50 transition-colors"
+              className="p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-800/50 transition-colors"
               title="Open PDF in new tab"
             >
               <FiExternalLink className="w-4 h-4" />
+            </button>
+            <button
+              onClick={downloadPdf}
+              className="p-2 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-200 dark:hover:bg-green-800/50 transition-colors"
+              title="Download PDF"
+            >
+              <FiDownload className="w-4 h-4" />
             </button>
           </div>
         </div>
