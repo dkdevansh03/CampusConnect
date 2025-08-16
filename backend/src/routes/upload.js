@@ -2,7 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import cloudinary from '../config/cloudinary.js';
-import { auth } from '../middleware/auth.js';
+import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -38,7 +38,7 @@ const upload = multer({
 });
 
 // Upload single file
-router.post('/', auth, upload.single('file'), (req, res) => {
+router.post('/', requireAuth, upload.single('file'), (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded' });
