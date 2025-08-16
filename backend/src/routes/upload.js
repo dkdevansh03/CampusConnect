@@ -10,18 +10,24 @@ const router = express.Router();
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: (req, file) => {
-    // Force PDFs to be uploaded as raw
-    const resourceType = file.mimetype === 'application/pdf' ? 'raw' : 'auto';
+    console.log('Uploading file:', file.originalname, 'Type:', file.mimetype);
     
-    return {
-      folder: 'campus-connect',
-      resource_type: resourceType,
-      allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf'],
-      // Don't apply transformations to PDFs
-      transformation: resourceType === 'auto' ? [{ quality: 'auto' }] : undefined,
-      // Ensure proper file extension
-      public_id: file.originalname.replace(/\.[^/.]+$/, ""), // Remove extension, Cloudinary will add it
-    };
+    // Force PDFs to be uploaded as raw
+    if (file.mimetype === 'application/pdf') {
+      return {
+        folder: 'campus-connect',
+        resource_type: 'raw',
+        allowed_formats: ['pdf'],
+        public_id: `${Date.now()}-${file.originalname.replace(/\.[^/.]+$/, "")}`
+      };
+    } else {
+      return {
+        folder: 'campus-connect',
+        resource_type: 'auto',
+        allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+        transformation: [{ quality: 'auto' }]
+      };
+    }
   }
 });
 
@@ -47,10 +53,11 @@ router.post('/', requireAuth, upload.single('file'), (req, res) => {
       return res.status(400).json({ message: 'No file uploaded' });
     }
 
-    console.log('Uploaded file:', {
+    console.log('Upload successful:', {
       originalname: req.file.originalname,
       mimetype: req.file.mimetype,
-      path: req.file.path
+      path: req.file.path,
+      size: req.file.size
     });
 
     res.json({
