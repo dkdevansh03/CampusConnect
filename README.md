@@ -86,9 +86,9 @@ Pull requests are welcome! For major changes, please open an issue first to disc
 
 ## License
 
-MIT
+[MIT]
 
 ## Author
 
-Your Name  
-[GitHub Profile](https://github.com/yourusername)
+DEVANSH GUPTA
+[GitHub Profile](https://github.com/dkdevansh03)
