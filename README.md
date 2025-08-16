@@ -1,94 +1,223 @@
 # CampusConnect
 
-CampusConnect is a web application designed for campus communities to share resources, events, posts, messages, and documents. It integrates with Cloudinary for file storage and provides a user-friendly interface for students and staff.
+A full-stack social media platform designed for campus communities to connect, share, and collaborate. Built with React, Node.js, and MongoDB.
 
-## Features
+## 🚀 Features
 
-- **Posts:** Create, view, and interact with campus posts.
-- **Events:** Discover and manage campus events.
-- **Messages:** Send and receive messages within the campus community.
-- **PDF & Document Management:** Upload, store, and view PDFs and other documents using Cloudinary.
-- **Secure File Delivery:** Ensures only authorized users can access private resources.
+- **User Authentication** - JWT-based auth with role-based access (Student, Teacher, Admin)
+- **Posts & Feed** - Create, edit, delete posts with rich text and file attachments
+- **Comments** - Threaded commenting system on posts
+- **Events** - Campus event management and discovery
+- **Messages** - Real-time messaging between users
+- **File Uploads** - Support for images and PDFs via Cloudinary
+- **Search & Filter** - Text search and tag-based filtering
+- **Dark Mode** - Toggle between light and dark themes
+- **Responsive Design** - Mobile-first design with Tailwind CSS
 
-## Technologies Used
+## 🛠️ Tech Stack
 
-- **Frontend:** React, JavaScript, HTML, CSS
-- **Backend:** Node.js, Express
-- **Database:** MongoDB
-- **File Uploads:** Multer (for handling uploads in Node.js)
-- **Cloud Storage:** Cloudinary (for PDFs and other files)
-- **Other:** Axios (API requests), JWT (authentication), etc.
+### Frontend
+- **React 18** - Modern UI library
+- **Vite** - Fast build tool and dev server
+- **Tailwind CSS** - Utility-first CSS framework
+- **React Router DOM** - Client-side routing
+- **Axios** - HTTP client for API calls
+- **React Icons** - Icon library
 
-## Setup Instructions
+### Backend
+- **Node.js** - JavaScript runtime
+- **Express.js** - Web framework
+- **MongoDB** - NoSQL database
+- **Mongoose** - MongoDB object modeling
+- **JWT** - Authentication tokens
+- **bcryptjs** - Password hashing
+- **Multer** - File upload middleware
+- **Cloudinary** - Cloud file storage
+- **Helmet** - Security middleware
+- **CORS** - Cross-origin resource sharing
+- **Morgan** - HTTP request logger
+
+## 📁 Project Structure
+
+```
+CampusConnect/
+├── frontend/                 # React frontend application
+│   ├── src/
+│   │   ├── components/      # Reusable React components
+│   │   ├── pages/          # Page components
+│   │   ├── config/         # Configuration files
+│   │   └── api/            # API client setup
+│   ├── public/             # Static assets
+│   └── package.json        # Frontend dependencies
+├── backend/                # Node.js backend application
+│   ├── src/
+│   │   ├── routes/         # API route handlers
+│   │   ├── models/         # MongoDB schemas
+│   │   ├── middleware/     # Custom middleware
+│   │   ├── scripts/        # Utility scripts
+│   │   └── seed/           # Database seeding
+│   └── server.js           # Main server file
+└── README.md              # Project documentation
+```
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js (v16 or higher)
+- MongoDB (local or MongoDB Atlas)
+- Cloudinary account (for file uploads)
+
+### Installation
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/CampusConnect.git
+   git clone https://github.com/dkdevansh03/CampusConnect.git
    cd CampusConnect
    ```
 
 2. **Install dependencies**
    ```bash
-   npm install
+   npm run install:all
    ```
 
-3. **Configure Environment**
-   - Set up your database connection in the config file.
-   - Add your Cloudinary credentials to `.env` or config.
-   - Configure other environment variables as needed.
-
-4. **Cloudinary Setup**
-   - Create a Cloudinary account.
-   - Upload PDFs and documents as resource type **raw**.
-   - Set files to **Public** for open access or configure access control for private files.
-   - Add your domain to Cloudinary CORS whitelist if needed.
-
-5. **Run the application**
+3. **Backend setup**
    ```bash
-   npm start
+   cd backend
+   cp .env.example .env
+   # Edit .env with your configuration
    ```
 
-## Usage
+4. **Environment Variables**
+   Create `.env` in the backend directory:
+   ```env
+   PORT=4000
+   MONGO_URI=mongodb://localhost:27017/campusconnect
+   JWT_SECRET=your-jwt-secret
+   CLOUDINARY_CLOUD_NAME=your-cloudinary-name
+   CLOUDINARY_API_KEY=your-cloudinary-key
+   CLOUDINARY_API_SECRET=your-cloudinary-secret
+   CLIENT_URL=http://localhost:3000
+   ```
 
-- **Posts:** Users can create and view posts about campus activities.
-- **Events:** Users can browse upcoming events and RSVP.
-- **Messages:** Users can chat with others in the campus community.
-- **PDFs/Documents:** Users can upload and view documents.  
-  Example function to open PDFs in a new tab:
-  ```javascript
-  // ...existing code...
-  function openPdfInNewTab(pdfUrl) {
-      if (pdfUrl.includes('cloudinary.com/image/upload')) {
-          pdfUrl = pdfUrl.replace('/image/upload/', '/raw/upload/');
-      }
-      if (pdfUrl.includes('cloudinary.com') && !pdfUrl.endsWith('.pdf')) {
-          pdfUrl += '.pdf';
-      }
-      window.open(pdfUrl, '_blank');
-  }
-  // ...existing code...
-  ```
+5. **Create frontend environment**
+   Create `.env` in the frontend directory:
+   ```env
+   VITE_API_URL=http://localhost:4000/api
+   VITE_FRONTEND_URL=http://localhost:3000
+   ```
 
-## Troubleshooting
+6. **Seed admin user (optional)**
+   ```bash
+   cd backend
+   npm run seed:admin
+   ```
 
-- **401 Unauthorized (PDFs):**  
-  Set Cloudinary file access to Public and remove "Blocked for delivery".
-- **CORS errors:**  
-  Add your domain to Cloudinary CORS whitelist.
-- **Database issues:**  
-  Check your database connection settings.
-- **PDF not loading:**  
-  Test the direct PDF URL in your browser.
+7. **Start development servers**
+   ```bash
+   # Terminal 1 - Backend
+   cd backend
+   npm run dev
 
-## Contributing
+   # Terminal 2 - Frontend
+   cd frontend
+   npm run dev
+   ```
 
-Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
+8. **Access the application**
+   - Frontend: http://localhost:3000
+   - Backend API: http://localhost:4000
 
-## License
+## 📊 API Endpoints
 
-[MIT]
+### Authentication
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `GET /api/auth/me` - Get current user
 
-## Author
+### Posts
+- `GET /api/posts` - Get all posts (with search/filter)
+- `POST /api/posts` - Create new post
+- `GET /api/posts/:id` - Get single post
+- `PATCH /api/posts/:id` - Update post
+- `DELETE /api/posts/:id` - Delete post
 
-DEVANSH GUPTA
+### Comments
+- `GET /api/posts/:postId/comments` - Get post comments
+- `POST /api/posts/:postId/comments` - Add comment
+
+### Events
+- `GET /api/events` - Get all events
+- `POST /api/events` - Create event
+
+### File Upload
+- `POST /api/upload` - Upload files to Cloudinary
+
+### Messages
+- `GET /api/messages` - Get user messages
+- `POST /api/messages` - Send message
+
+## 🔧 Configuration
+
+### Cloudinary Setup
+1. Create account at [cloudinary.com](https://cloudinary.com)
+2. Get your cloud name, API key, and API secret
+3. Add credentials to backend `.env`
+4. For PDFs: Upload as resource type "raw"
+5. Set files to "Public" access
+
+### Database Migration
+If upgrading from local file storage:
+```bash
+cd backend
+npm run migrate:files
+```
+
+## 🚀 Deployment
+
+### Frontend (Vercel)
+1. Connect your GitHub repo to Vercel
+2. Set build command: `npm run build`
+3. Set output directory: `dist`
+4. Add environment variables
+
+### Backend (Render)
+1. Connect your GitHub repo to Render
+2. Set build command: `npm install`
+3. Set start command: `npm start`
+4. Add environment variables
+
+## 🐛 Troubleshooting
+
+### PDF Upload Issues
+- Ensure PDFs are uploaded as "raw" resource type in Cloudinary
+- Check file access is set to "Public"
+- Remove "Blocked for delivery" access control
+
+### CORS Errors
+- Add your frontend domain to backend CORS configuration
+- Check environment variables are properly set
+
+### Database Connection
+- Verify MongoDB URI in environment variables
+- Ensure MongoDB service is running
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+
+## 👨‍💻 Author
+
+**DEVANSH GUPTA**  
 [GitHub Profile](https://github.com/dkdevansh03)
+
+---
+
+*Built with ❤️ for campus communities*
