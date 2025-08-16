@@ -161,5 +161,3 @@ export default function PostCard({ post, onDelete, onEdit }) {
     </div>
   )
 }
-  )
-}
