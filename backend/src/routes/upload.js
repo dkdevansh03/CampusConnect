@@ -10,14 +10,17 @@ const router = express.Router();
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: (req, file) => {
-    // Determine resource type based on file type
+    // Force PDFs to be uploaded as raw
     const resourceType = file.mimetype === 'application/pdf' ? 'raw' : 'auto';
     
     return {
       folder: 'campus-connect',
       resource_type: resourceType,
       allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf'],
-      transformation: resourceType === 'image' ? [{ quality: 'auto' }] : undefined
+      // Don't apply transformations to PDFs
+      transformation: resourceType === 'auto' ? [{ quality: 'auto' }] : undefined,
+      // Ensure proper file extension
+      public_id: file.originalname.replace(/\.[^/.]+$/, ""), // Remove extension, Cloudinary will add it
     };
   }
 });
@@ -44,10 +47,16 @@ router.post('/', requireAuth, upload.single('file'), (req, res) => {
       return res.status(400).json({ message: 'No file uploaded' });
     }
 
+    console.log('Uploaded file:', {
+      originalname: req.file.originalname,
+      mimetype: req.file.mimetype,
+      path: req.file.path
+    });
+
     res.json({
       message: 'File uploaded successfully',
       url: req.file.path,
-      filename: req.file.filename,
+      filename: req.file.originalname,
       size: req.file.size
     });
   } catch (error) {
