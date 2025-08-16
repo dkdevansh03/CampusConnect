@@ -36,6 +36,5 @@ export const getApiUrl = (endpoint) => {
   if (endpoint.startsWith('http')) return endpoint
   return `${config.API_BASE}${endpoint}`
 }
-  if (endpoint.startsWith('http')) return endpoint
-  return `${config.API_BASE}${endpoint}`
-}
+
+
