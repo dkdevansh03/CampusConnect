@@ -38,33 +38,49 @@ export default function PostCard({ post, onDelete, onEdit }) {
     }
   }
 
+  const getUploadUrl = (url) => {
+    // You can add transformations here if needed
+    return url;
+  };
+
   const renderAttachment = (rawUrl, index) => {
-    const url = getUploadUrl(rawUrl)
-    // Check if it's an image
-    if (url.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
-      return (
-        <div key={index} className="w-16 h-16 bg-gray-200 dark:bg-gray-600 rounded-lg flex items-center justify-center overflow-hidden">
-          <img src={url} alt="attachment" className="w-full h-full object-cover" />
-        </div>
-      )
-    }
-    
-    // Check if it's a PDF
-    if (url.match(/\.pdf$/i)) {
+    const url = getUploadUrl(rawUrl);
+
+    // PDF detect
+    if (url.endsWith('.pdf')) {
       return (
         <div key={index} className="w-full">
           <PDFViewer url={url} filename={`Document ${index + 1}`} />
         </div>
-      )
+      );
     }
-    
-    // Default file icon
+
+    // Images
+    if (url.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+      return (
+        <div
+          key={index}
+          className="w-16 h-16 bg-gray-200 dark:bg-gray-600 rounded-lg flex items-center justify-center overflow-hidden"
+        >
+          <img
+            src={url}
+            alt="attachment"
+            className="w-full h-full object-cover"
+          />
+        </div>
+      );
+    }
+
+    // Other files
     return (
-      <div key={index} className="w-16 h-16 bg-gray-200 dark:bg-gray-600 rounded-lg flex items-center justify-center">
+      <div
+        key={index}
+        className="w-16 h-16 bg-gray-200 dark:bg-gray-600 rounded-lg flex items-center justify-center"
+      >
         <FiFile className="w-6 h-6 text-gray-500" />
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <div className="group p-6 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-xl hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300 hover:-translate-y-1">
@@ -130,12 +146,7 @@ export default function PostCard({ post, onDelete, onEdit }) {
       {!!post.attachments?.length && (
         <div className="mt-4">
           <div className="flex flex-wrap gap-2">
-            {post.attachments.slice(0, 3).map((url, index) => renderAttachment(url, index))}
-            {post.attachments.length > 3 && (
-              <div className="w-16 h-16 bg-gray-200 dark:bg-gray-600 rounded-lg flex items-center justify-center text-xs text-gray-500 font-medium">
-                +{post.attachments.length - 3} more
-              </div>
-            )}
+            {post.attachments.map((url, index) => renderAttachment(url, index))}
           </div>
         </div>
       )}
