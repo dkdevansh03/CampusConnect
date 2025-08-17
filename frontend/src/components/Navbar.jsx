@@ -2,11 +2,15 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useTheme } from '../context/ThemeContext.jsx'
 import { FiSun, FiMoon, FiMenu, FiHome, FiCalendar, FiPlus, FiMessageCircle, FiUsers, FiUser, FiLogOut } from 'react-icons/fi'
+import { useState } from 'react'
 
 export default function Navbar() {
   const { user, logout } = useAuth()
   const { dark, setDark } = useTheme()
   const nav = useNavigate()
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  const toggleMenu = () => setMenuOpen((v) => !v)
 
   return (
     <header className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white shadow-lg sticky top-0 z-30 backdrop-blur-sm bg-opacity-95">
@@ -83,12 +87,54 @@ export default function Navbar() {
           )}
 
           <div className="lg:hidden ml-2">
-            <button className="p-3 rounded-lg hover:bg-white/20 transition-all duration-300">
+            <button className="p-3 rounded-lg hover:bg-white/20 transition-all duration-300" onClick={toggleMenu}>
               <FiMenu className="w-6 h-6" />
             </button>
           </div>
         </div>
       </div>
+      {/* Mobile menu */}
+      {menuOpen && (
+        <div className="lg:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 px-4 py-4 flex flex-col gap-2">
+          <Link to="/" className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900 transition-all" onClick={() => setMenuOpen(false)}>
+            <FiHome className="w-4 h-4" />
+            Home
+          </Link>
+          <Link to="/feed" className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900 transition-all" onClick={() => setMenuOpen(false)}>
+            <FiHome className="w-4 h-4" />
+            Feed
+          </Link>
+          <Link to="/create" className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900 transition-all" onClick={() => setMenuOpen(false)}>
+            <FiPlus className="w-4 h-4" />
+            Create
+          </Link>
+          <Link to="/events" className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900 transition-all" onClick={() => setMenuOpen(false)}>
+            <FiCalendar className="w-4 h-4" />
+            Events
+          </Link>
+          <Link to="/messages" className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900 transition-all" onClick={() => setMenuOpen(false)}>
+            <FiMessageCircle className="w-4 h-4" />
+            Messages
+          </Link>
+          {user?.role === 'admin' && (
+            <Link to="/admin" className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900 transition-all" onClick={() => setMenuOpen(false)}>
+              <FiUsers className="w-4 h-4" />
+              Admin
+            </Link>
+          )}
+          <Link to="/profile" className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900 transition-all" onClick={() => setMenuOpen(false)}>
+            <FiUser className="w-4 h-4" />
+            Profile
+          </Link>
+          <button
+            onClick={() => { logout(); nav('/login'); setMenuOpen(false); }}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-50 dark:bg-red-900 text-red-700 dark:text-red-300 font-semibold hover:bg-red-100 dark:hover:bg-red-800 transition-all"
+          >
+            <FiLogOut className="w-4 h-4" />
+            Logout
+          </button>
+        </div>
+      )}
     </header>
   )
 }

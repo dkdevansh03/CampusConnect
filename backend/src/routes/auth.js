@@ -70,4 +70,21 @@ router.patch('/change-password', requireAuth, async (req, res, next) => {
   }
 });
 
+// Update profile (name, email)
+router.patch('/profile', requireAuth, async (req, res, next) => {
+  try {
+    const { name, email } = req.body;
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (name) user.name = name;
+    if (email) user.email = email;
+
+    await user.save();
+    res.json({ user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default router;
