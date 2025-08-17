@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useAuth } from '../context/AuthContext.jsx'
 import api from '../api/client.js'
 import { FiSend, FiUser, FiMessageCircle, FiSearch, FiArrowLeft } from 'react-icons/fi'
@@ -11,6 +11,8 @@ export default function Messages() {
   const [text, setText] = useState('')
   const [loading, setLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+  const [notification, setNotification] = useState('')
+  const messagesEndRef = useRef(null)
 
   // Load all users for messaging
   async function loadUsers() {
@@ -23,11 +25,16 @@ export default function Messages() {
   }
 
   // Load conversation with selected user
-  async function loadMessages(userId) {
+  async function loadMessages(userId, notify = false) {
     if (!userId) return
     setLoading(true)
     try {
       const { data } = await api.get(`/messages/with/${userId}`)
+      // Notification for new message
+      if (notify && data.messages.length > messages.length) {
+        setNotification('New message received!')
+        setTimeout(() => setNotification(''), 2000)
+      }
       setMessages(data.messages || [])
     } catch (error) {
       console.error('Failed to load messages:', error)
@@ -35,6 +42,22 @@ export default function Messages() {
       setLoading(false)
     }
   }
+
+  // Poll for new messages every 5 seconds
+  useEffect(() => {
+    if (!selectedUser) return
+    const interval = setInterval(() => {
+      loadMessages(selectedUser._id, true)
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [selectedUser, messages.length])
+
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [messages])
 
   // Send message
   async function sendMessage(e) {
@@ -44,7 +67,6 @@ export default function Messages() {
     try {
       await api.post('/messages', { to: selectedUser._id, content: text })
       setText('')
-      // Reload messages to show the new message
       loadMessages(selectedUser._id)
     } catch (error) {
       console.error('Failed to send message:', error)
@@ -94,7 +116,7 @@ export default function Messages() {
             </div>
 
             {/* Users */}
-            <div className="overflow-y-auto h-[500px]">
+            <div className="overflow-y-auto h-[500px] custom-scrollbar">
               {filteredUsers.map((u) => (
                 <div
                   key={u._id}
@@ -145,34 +167,44 @@ export default function Messages() {
                   </div>
                 </div>
 
+                {/* Notification */}
+                {notification && (
+                  <div className="text-center py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-semibold">
+                    {notification}
+                  </div>
+                )}
+
                 {/* Messages */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900">
+                <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900 custom-scrollbar">
                   {loading ? (
                     <div className="flex items-center justify-center h-full">
                       <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
                     </div>
                   ) : messages.length > 0 ? (
-                    messages.map((message) => (
-                      <div
-                        key={message._id}
-                        className={`flex ${message.from === user?._id ? 'justify-end' : 'justify-start'}`}
-                      >
+                    <>
+                      {messages.map((message) => (
                         <div
-                          className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
-                            message.from === user?._id
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600'
-                          }`}
+                          key={message._id}
+                          className={`flex ${message.from === user?._id ? 'justify-end' : 'justify-start'}`}
                         >
-                          <p className="text-sm">{message.content}</p>
-                          <p className={`text-xs mt-1 ${
-                            message.from === user?._id ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'
-                          }`}>
-                            {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </p>
+                          <div
+                            className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
+                              message.from === user?._id
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600'
+                            }`}
+                          >
+                            <p className="text-sm">{message.content}</p>
+                            <p className={`text-xs mt-1 ${
+                              message.from === user?._id ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'
+                            }`}>
+                              {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    ))
+                      ))}
+                      <div ref={messagesEndRef} />
+                    </>
                   ) : (
                     <div className="text-center text-gray-500 dark:text-gray-400 py-8">
                       <FiMessageCircle className="w-12 h-12 mx-auto mb-2 opacity-50" />
