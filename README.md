@@ -204,15 +204,4 @@ This project is licensed under the [MIT License](https://opensource.org/licenses
 
 *Built with ❤️ for campus communities*
 
-## 📝 License
 
-This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
-
-## 👨‍💻 Author
-
-**DEVANSH GUPTA**  
-[GitHub Profile](https://github.com/dkdevansh03)
-
----
-
-*Built with ❤️ for campus communities*
