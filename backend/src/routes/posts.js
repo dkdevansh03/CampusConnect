@@ -38,6 +38,7 @@ router.get('/:id', requireAuth, async (req, res, next) => {
 });
 
 // Update (author or admin)
+// Only author or admin can update
 router.patch('/:id', requireAuth, async (req, res, next) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -56,6 +57,7 @@ router.patch('/:id', requireAuth, async (req, res, next) => {
 });
 
 // Delete
+// Only author or admin can delete
 router.delete('/:id', requireAuth, async (req, res, next) => {
   try {
     const post = await Post.findById(req.params.id);

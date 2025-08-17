@@ -12,6 +12,7 @@ export default function PostDetail() {
   const [text, setText] = useState('')
   const [loading, setLoading] = useState(false)
   const [commentLoading, setCommentLoading] = useState(false)
+  const [replyTo, setReplyTo] = useState(null)
 
   async function load() {
     setLoading(true)
@@ -35,8 +36,9 @@ export default function PostDetail() {
     
     setCommentLoading(true)
     try {
-      await api.post(`/posts/${id}/comments`, { content: text })
+      await api.post(`/posts/${id}/comments`, { content: text, parent: replyTo })
       setText('')
+      setReplyTo(null)
       load()
     } catch (error) {
       console.error('Failed to add comment:', error)
@@ -95,6 +97,47 @@ export default function PostDetail() {
       </a>
     )
   }
+
+  // Recursive render for nested comments
+  const renderComments = (comments, level = 0) => (
+    <div className={level ? "ml-8 border-l-2 border-blue-100 dark:border-blue-900 pl-4" : ""}>
+      {comments.map(comment => (
+        <div key={comment._id} className="flex gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl mb-2">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
+            {comment.author?.name?.charAt(0)?.toUpperCase() || 'U'}
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="font-semibold text-gray-900 dark:text-white">
+                {comment.author?.name}
+              </span>
+              <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(comment.author?.role)}`}>
+                {comment.author?.role}
+              </span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                {new Date(comment.createdAt).toLocaleDateString('en-US', { 
+                  month: 'short', 
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+              </span>
+              <button
+                className="ml-2 text-xs text-blue-600 dark:text-blue-300 underline"
+                onClick={() => { setReplyTo(comment._id); setText(''); }}
+              >
+                Reply
+              </button>
+            </div>
+            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+              {comment.content}
+            </p>
+            {comment.replies && comment.replies.length > 0 && renderComments(comment.replies, level + 1)}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
 
   if (loading) {
     return (
@@ -212,11 +255,20 @@ export default function PostDetail() {
           <div className="flex gap-4">
             <input 
               className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-300" 
-              placeholder="Write a comment..." 
+              placeholder={replyTo ? "Write a reply..." : "Write a comment..."} 
               value={text} 
               onChange={e => setText(e.target.value)}
               required
             />
+            {replyTo && (
+              <button
+                type="button"
+                className="px-3 py-2 text-xs rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                onClick={() => { setReplyTo(null); setText(''); }}
+              >
+                Cancel Reply
+              </button>
+            )}
             <button 
               type="submit"
               disabled={commentLoading}
@@ -230,7 +282,7 @@ export default function PostDetail() {
               ) : (
                 <>
                   <FiSend className="w-4 h-4" />
-                  Comment
+                  {replyTo ? "Reply" : "Comment"}
                 </>
               )}
             </button>
@@ -240,34 +292,7 @@ export default function PostDetail() {
         {/* Comments List */}
         <div className="space-y-6">
           {comments.length > 0 ? (
-            comments.map(comment => (
-              <div key={comment._id} className="flex gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
-                  {comment.author?.name?.charAt(0)?.toUpperCase() || 'U'}
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="font-semibold text-gray-900 dark:text-white">
-                      {comment.author?.name}
-                    </span>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(comment.author?.role)}`}>
-                      {comment.author?.role}
-                    </span>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
-                      {new Date(comment.createdAt).toLocaleDateString('en-US', { 
-                        month: 'short', 
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </span>
-                  </div>
-                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                    {comment.content}
-                  </p>
-                </div>
-              </div>
-            ))
+            renderComments(comments)
           ) : (
             <div className="text-center py-12">
               <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">

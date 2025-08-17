@@ -102,6 +102,7 @@ CampusConnect/
    ```
 
 6. **Seed admin user (optional)**
+   > **Note:** Run this command inside the `backend` folder to create the admin user in your current database (Atlas or local).
    ```bash
    cd backend
    npm run seed:admin

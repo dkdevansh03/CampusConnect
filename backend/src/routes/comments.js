@@ -5,24 +5,36 @@ import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Create a comment
+// Create a comment or reply
 router.post('/posts/:postId/comments', requireAuth, async (req, res, next) => {
   try {
-    const { content } = req.body;
+    const { content, parent } = req.body;
     const post = await Post.findById(req.params.postId);
     if (!post) return res.status(404).json({ message: 'Post not found' });
-    const comment = await Comment.create({ post: post._id, author: req.user._id, content });
+    const comment = await Comment.create({ post: post._id, author: req.user._id, content, parent: parent || null });
     res.status(201).json({ comment });
   } catch (err) { next(err); }
 });
 
-// List comments for a post
+// List comments for a post (nested)
 router.get('/posts/:postId/comments', requireAuth, async (req, res, next) => {
   try {
-    const comments = await Comment.find({ post: req.params.postId })
+    const allComments = await Comment.find({ post: req.params.postId })
       .populate('author', 'name role')
-      .sort({ createdAt: -1 });
-    res.json({ comments });
+      .sort({ createdAt: 1 });
+
+    // Build nested tree
+    const map = {};
+    allComments.forEach(c => map[c._id] = { ...c.toObject(), replies: [] });
+    const tree = [];
+    allComments.forEach(c => {
+      if (c.parent) {
+        map[c.parent]?.replies.push(map[c._id]);
+      } else {
+        tree.push(map[c._id]);
+      }
+    });
+    res.json({ comments: tree });
   } catch (err) { next(err); }
 });
 
