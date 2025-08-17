@@ -18,6 +18,11 @@ router.post('/', requireAuth, async (req, res, next) => {
 router.get('/with/:userId', requireAuth, async (req, res, next) => {
   try {
     const other = req.params.userId;
+    // Mark all messages sent to current user from 'other' as read
+    await Message.updateMany(
+      { from: other, to: req.user._id, read: false },
+      { $set: { read: true } }
+    );
     const messages = await Message.find({
       $or: [
         { from: req.user._id, to: other },
@@ -25,6 +30,18 @@ router.get('/with/:userId', requireAuth, async (req, res, next) => {
       ]
     }).sort({ createdAt: 1 });
     res.json({ messages });
+  } catch (err) { next(err); }
+});
+
+// Get unread messages summary for current user
+router.get('/unread-summary', requireAuth, async (req, res, next) => {
+  try {
+    // Group unread messages by sender
+    const unread = await Message.aggregate([
+      { $match: { to: req.user._id, read: false } },
+      { $group: { _id: "$from", count: { $sum: 1 } } }
+    ]);
+    res.json({ unread });
   } catch (err) { next(err); }
 });
 

@@ -2,13 +2,29 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useTheme } from '../context/ThemeContext.jsx'
 import { FiSun, FiMoon, FiMenu, FiHome, FiCalendar, FiPlus, FiMessageCircle, FiUsers, FiUser, FiLogOut } from 'react-icons/fi'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import api from '../api/client.js'
 
 export default function Navbar() {
   const { user, logout } = useAuth()
   const { dark, setDark } = useTheme()
   const nav = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [hasUnreadMessages, setHasUnreadMessages] = useState(false)
+
+  useEffect(() => {
+    async function fetchUnread() {
+      if (user) {
+        try {
+          const { data } = await api.get('/messages/unread-summary')
+          setHasUnreadMessages(data.unread && data.unread.length > 0)
+        } catch {}
+      } else {
+        setHasUnreadMessages(false)
+      }
+    }
+    fetchUnread()
+  }, [user])
 
   const toggleMenu = () => setMenuOpen((v) => !v)
 
@@ -41,9 +57,12 @@ export default function Navbar() {
             <FiPlus className="w-4 h-4" />
             <span className="font-medium">Create</span>
           </Link>
-          <Link to="/messages" className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-white/20 transition-all duration-300 group">
+          <Link to="/messages" className="relative flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-white/20 transition-all duration-300 group">
             <FiMessageCircle className="w-4 h-4" />
             <span className="font-medium">Messages</span>
+            {hasUnreadMessages && (
+              <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center font-bold shadow-lg">1</span>
+            )}
           </Link>
           {user?.role === 'admin' && (
             <Link to="/admin" className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-white/20 transition-all duration-300 group">
@@ -112,9 +131,12 @@ export default function Navbar() {
             <FiCalendar className="w-4 h-4" />
             Events
           </Link>
-          <Link to="/messages" className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900 transition-all" onClick={() => setMenuOpen(false)}>
+          <Link to="/messages" className="relative flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900 transition-all" onClick={() => setMenuOpen(false)}>
             <FiMessageCircle className="w-4 h-4" />
             Messages
+            {hasUnreadMessages && (
+              <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center font-bold shadow-lg">1</span>
+            )}
           </Link>
           {user?.role === 'admin' && (
             <Link to="/admin" className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900 transition-all" onClick={() => setMenuOpen(false)}>
