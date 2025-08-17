@@ -32,8 +32,8 @@ const PDFViewer = ({ url, filename }) => {
   }
 
   return (
-    <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-900 rounded-xl border border-blue-200 dark:border-purple-700 shadow-md">
-      <span className="text-base font-semibold text-blue-700 dark:text-purple-300 truncate flex-1">
+    <div className="flex flex-wrap items-center gap-2 p-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-900 rounded-xl border border-blue-200 dark:border-purple-700 shadow-md">
+      <span className="text-base font-semibold text-blue-700 dark:text-purple-300 truncate flex-1 min-w-[120px]">
         {filename || 'PDF Document'}
       </span>
       <button
