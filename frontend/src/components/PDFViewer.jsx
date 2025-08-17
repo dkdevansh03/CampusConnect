@@ -6,15 +6,29 @@ const PDFViewer = ({ url, filename }) => {
     window.open(url, '_blank')
   }
 
-  const downloadPdf = () => {
-    // Force download to local
-    const link = document.createElement('a')
-    link.href = url
-    link.download = filename?.endsWith('.pdf') ? filename : filename || 'document.pdf'
-    link.target = '_self' // Use _self to force browser download
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+  const downloadPdf = async () => {
+    try {
+      // Try to fetch and force download as blob
+      const response = await fetch(url)
+      const blob = await response.blob()
+      const blobUrl = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = blobUrl
+      link.download = filename?.endsWith('.pdf') ? filename : filename || 'document.pdf'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(blobUrl)
+    } catch {
+      // Fallback to default behavior
+      const link = document.createElement('a')
+      link.href = url
+      link.download = filename?.endsWith('.pdf') ? filename : filename || 'document.pdf'
+      link.target = '_self'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    }
   }
 
   return (
