@@ -95,34 +95,34 @@ export default function Navbar() {
       </div>
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="lg:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 px-4 py-4 flex flex-col gap-2">
-          <Link to="/" className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900 transition-all" onClick={() => setMenuOpen(false)}>
+        <div className="lg:hidden bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 px-4 py-4 flex flex-col gap-2 text-gray-900 dark:text-white">
+          <Link to="/" className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900 transition-all" onClick={() => setMenuOpen(false)}>
             <FiHome className="w-4 h-4" />
             Home
           </Link>
-          <Link to="/feed" className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900 transition-all" onClick={() => setMenuOpen(false)}>
+          <Link to="/feed" className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900 transition-all" onClick={() => setMenuOpen(false)}>
             <FiHome className="w-4 h-4" />
             Feed
           </Link>
-          <Link to="/create" className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900 transition-all" onClick={() => setMenuOpen(false)}>
+          <Link to="/create" className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900 transition-all" onClick={() => setMenuOpen(false)}>
             <FiPlus className="w-4 h-4" />
             Create
           </Link>
-          <Link to="/events" className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900 transition-all" onClick={() => setMenuOpen(false)}>
+          <Link to="/events" className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900 transition-all" onClick={() => setMenuOpen(false)}>
             <FiCalendar className="w-4 h-4" />
             Events
           </Link>
-          <Link to="/messages" className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900 transition-all" onClick={() => setMenuOpen(false)}>
+          <Link to="/messages" className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900 transition-all" onClick={() => setMenuOpen(false)}>
             <FiMessageCircle className="w-4 h-4" />
             Messages
           </Link>
           {user?.role === 'admin' && (
-            <Link to="/admin" className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900 transition-all" onClick={() => setMenuOpen(false)}>
+            <Link to="/admin" className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900 transition-all" onClick={() => setMenuOpen(false)}>
               <FiUsers className="w-4 h-4" />
               Admin
             </Link>
           )}
-          <Link to="/profile" className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900 transition-all" onClick={() => setMenuOpen(false)}>
+          <Link to="/profile" className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900 transition-all" onClick={() => setMenuOpen(false)}>
             <FiUser className="w-4 h-4" />
             Profile
           </Link>
