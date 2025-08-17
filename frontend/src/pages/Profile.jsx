@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { useAuth } from '../context/AuthContext.jsx'
 import { FiUser, FiMail, FiAward, FiCalendar, FiShield } from 'react-icons/fi'
 import ChangePasswordModal from '../components/ChangePasswordModal.jsx'
+import EditProfileModal from '../components/EditProfileModal.jsx'
 
 export default function Profile() {
   const { user } = useAuth()
   const [showChangePassword, setShowChangePassword] = useState(false)
+  const [showEditProfile, setShowEditProfile] = useState(false)
   
   if (!user) return null
 
@@ -34,6 +36,11 @@ export default function Profile() {
       case 'student': return 'Can post, comment, and participate in events'
       default: return 'Basic user access'
     }
+  }
+
+  const handleProfileSave = (updatedUserData) => {
+    // Optionally update local user state here if needed
+    setShowEditProfile(false)
   }
 
   return (
@@ -149,7 +156,10 @@ export default function Profile() {
           <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h3>
             <div className="flex flex-wrap gap-4">
-              <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl">
+              <button
+                className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl"
+                onClick={() => setShowEditProfile(true)}
+              >
                 Edit Profile
               </button>
               <button 
@@ -168,6 +178,15 @@ export default function Profile() {
         isOpen={showChangePassword}
         onClose={() => setShowChangePassword(false)}
       />
+
+      {/* Edit Profile Modal */}
+      {showEditProfile && (
+        <EditProfileModal
+          user={user}
+          onClose={() => setShowEditProfile(false)}
+          onSave={handleProfileSave}
+        />
+      )}
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import React from 'react'
-import { FiDownload } from 'react-icons/fi'
+import { FiDownload, FiEye } from 'react-icons/fi'
 
 const PDFViewer = ({ url, filename }) => {
   const openPdfInNewTab = () => {
@@ -7,32 +7,36 @@ const PDFViewer = ({ url, filename }) => {
   }
 
   const downloadPdf = () => {
-    // Force download with .pdf extension
+    // Force download to local
     const link = document.createElement('a')
     link.href = url
     link.download = filename?.endsWith('.pdf') ? filename : filename || 'document.pdf'
-    link.target = '_blank'
+    link.target = '_self' // Use _self to force browser download
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
   }
 
   return (
-    <div className="flex items-center space-x-2 p-2 bg-gray-100 dark:bg-gray-700 rounded-md">
-      <span className="text-sm truncate">{filename || 'PDF Document'}</span>
+    <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-900 rounded-xl border border-blue-200 dark:border-purple-700 shadow-md">
+      <span className="text-base font-semibold text-blue-700 dark:text-purple-300 truncate flex-1">
+        {filename || 'PDF Document'}
+      </span>
       <button
         onClick={openPdfInNewTab}
-        className="p-1 text-gray-600 dark:text-gray-200 hover:text-blue-500 transition-colors"
-        title={`View ${filename || 'PDF Document'}`}
+        className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold shadow transition-all duration-200"
+        title="View PDF"
       >
+        <FiEye className="w-5 h-5" />
         View
       </button>
       <button
         onClick={downloadPdf}
-        className="p-1 text-gray-600 dark:text-gray-200 hover:text-green-600 transition-colors"
-        title={`Download ${filename || 'PDF Document'}`}
+        className="inline-flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold shadow transition-all duration-200"
+        title="Download PDF"
       >
-        <FiDownload size={16} />
+        <FiDownload className="w-5 h-5" />
+        Download
       </button>
     </div>
   )
