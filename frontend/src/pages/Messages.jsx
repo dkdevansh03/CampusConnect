@@ -81,8 +81,8 @@ export default function Messages() {
         <div className="grid grid-cols-1 md:grid-cols-3 h-[600px]">
           
           {/* Users List */}
-          <div className="border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 flex flex-col h-[600px]">
+            <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
                 <FiMessageCircle className="w-5 h-5" />
                 Messages
@@ -102,7 +102,7 @@ export default function Messages() {
             </div>
 
             {/* Users */}
-            <div className="overflow-y-auto h-[500px] custom-scrollbar">
+            <div className="flex-1 overflow-y-auto custom-scrollbar">
               {filteredUsers.map((u) => (
                 <div
                   key={u._id}
@@ -131,11 +131,11 @@ export default function Messages() {
           </div>
 
           {/* Chat Area */}
-          <div className="md:col-span-2 flex flex-col">
+          <div className="md:col-span-2 flex flex-col h-[600px]">
             {selectedUser ? (
               <>
                 {/* Chat Header */}
-                <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex-shrink-0">
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() => setSelectedUser(null)}
@@ -193,7 +193,7 @@ export default function Messages() {
                 </div>
 
                 {/* Message Input */}
-                <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex-shrink-0">
                   <form onSubmit={sendMessage} className="flex gap-3">
                     <input
                       type="text"
