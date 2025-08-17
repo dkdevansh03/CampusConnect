@@ -25,16 +25,11 @@ export default function Messages() {
   }
 
   // Load conversation with selected user
-  async function loadMessages(userId, notify = false) {
+  async function loadMessages(userId) {
     if (!userId) return
     setLoading(true)
     try {
       const { data } = await api.get(`/messages/with/${userId}`)
-      // Notification for new message
-      if (notify && data.messages.length > messages.length) {
-        setNotification('New message received!')
-        setTimeout(() => setNotification(''), 2000)
-      }
       setMessages(data.messages || [])
     } catch (error) {
       console.error('Failed to load messages:', error)
@@ -42,15 +37,6 @@ export default function Messages() {
       setLoading(false)
     }
   }
-
-  // Poll for new messages every 5 seconds
-  useEffect(() => {
-    if (!selectedUser) return
-    const interval = setInterval(() => {
-      loadMessages(selectedUser._id, true)
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [selectedUser, messages.length])
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -166,13 +152,6 @@ export default function Messages() {
                     </div>
                   </div>
                 </div>
-
-                {/* Notification */}
-                {notification && (
-                  <div className="text-center py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-semibold">
-                    {notification}
-                  </div>
-                )}
 
                 {/* Messages */}
                 <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900 custom-scrollbar">
