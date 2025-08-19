@@ -37,6 +37,15 @@ export default function Navbar() {
     return () => window.removeEventListener('messages-read', handleRead)
   }, [])
 
+  // Poll unread summary every 2 seconds for auto notification
+  useEffect(() => {
+    if (!user) return
+    const interval = setInterval(() => {
+      fetchUnread()
+    }, 2000)
+    return () => clearInterval(interval)
+  }, [user])
+
   const toggleMenu = () => setMenuOpen((v) => !v)
 
   return (
