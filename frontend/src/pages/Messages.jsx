@@ -92,6 +92,15 @@ export default function Messages() {
     loadUsers()
   }, [])
 
+  // Add polling for new messages when chat is open
+  useEffect(() => {
+    if (!selectedUser) return
+    const interval = setInterval(() => {
+      loadMessages(selectedUser._id)
+    }, 2000) // fetch every 2 seconds for snappier updates
+    return () => clearInterval(interval)
+  }, [selectedUser])
+
   return (
     <div className="max-w-6xl mx-auto">
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
