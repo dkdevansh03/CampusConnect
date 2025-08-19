@@ -14,6 +14,7 @@ export default function Messages() {
   const [notification, setNotification] = useState('')
   const [unreadFrom, setUnreadFrom] = useState([])
   const messagesEndRef = useRef(null)
+  const lastMessageIdRef = useRef(null)
 
   // Load all users for messaging
   async function loadUsers() {
@@ -29,25 +30,27 @@ export default function Messages() {
   }
 
   // Load conversation with selected user
-  async function loadMessages(userId) {
+  async function loadMessages(userId, { silent = false } = {}) {
     if (!userId) return
-    setLoading(true)
+    if (!silent) setLoading(true)
     try {
       const { data } = await api.get(`/messages/with/${userId}`)
-      setMessages(data.messages || [])
+      // Only update if new messages arrived
+      const lastMsg = data.messages?.[data.messages.length - 1]?._id
+      if (lastMsg !== lastMessageIdRef.current) {
+        setMessages(data.messages || [])
+        lastMessageIdRef.current = lastMsg
+        // Scroll to bottom only if new messages
+        if (messagesEndRef.current) {
+          messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
+        }
+      }
     } catch (error) {
       console.error('Failed to load messages:', error)
     } finally {
-      setLoading(false)
+      if (!silent) setLoading(false)
     }
   }
-
-  // Scroll to bottom when messages change
-  useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
-    }
-  }, [messages])
 
   // Send message
   async function sendMessage(e) {
@@ -57,6 +60,7 @@ export default function Messages() {
     try {
       await api.post('/messages', { to: selectedUser._id, content: text })
       setText('')
+      // Always reload after sending
       loadMessages(selectedUser._id)
     } catch (error) {
       console.error('Failed to send message:', error)
@@ -96,8 +100,8 @@ export default function Messages() {
   useEffect(() => {
     if (!selectedUser) return
     const interval = setInterval(() => {
-      loadMessages(selectedUser._id)
-    }, 2000) // fetch every 2 seconds for snappier updates
+      loadMessages(selectedUser._id, { silent: true })
+    }, 2000) // fetch every 2 seconds
     return () => clearInterval(interval)
   }, [selectedUser])
 
