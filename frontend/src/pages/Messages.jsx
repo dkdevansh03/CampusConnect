@@ -13,6 +13,8 @@ export default function Messages() {
   const [searchTerm, setSearchTerm] = useState('')
   const [notification, setNotification] = useState('')
   const [unreadFrom, setUnreadFrom] = useState([])
+  const [unreadSummary, setUnreadSummary] = useState([])
+
   const messagesEndRef = useRef(null)
   const lastMessageIdRef = useRef(null)
 
@@ -86,11 +88,29 @@ export default function Messages() {
     return () => window.removeEventListener('messages-read', handleRead)
   }, [])
 
-  // Filter users based on search
-  const filteredUsers = users.filter(u =>
-    u._id !== user?._id &&
-    u.name.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  // Poll unread summary every 2 seconds
+  useEffect(() => {
+    const pollUnread = setInterval(async () => {
+      try {
+        const unreadRes = await api.get('/messages/unread-summary')
+        setUnreadFrom(unreadRes.data.unread.map(u => u._id))
+        setUnreadSummary(unreadRes.data.unread)
+        // Optionally, fire event for Navbar
+        if (window.dispatchEvent) window.dispatchEvent(new Event('messages-read'))
+      } catch {}
+    }, 2000)
+    return () => clearInterval(pollUnread)
+  }, [])
+
+  // Filter and sort users: move users with unread messages to top
+  const filteredUsers = [...users]
+    .filter(u => u._id !== user?._id && u.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    .sort((a, b) => {
+      // If b has unread, move to top
+      const bUnread = unreadFrom.includes(b._id) ? 1 : 0
+      const aUnread = unreadFrom.includes(a._id) ? 1 : 0
+      return bUnread - aUnread
+    })
 
   useEffect(() => {
     loadUsers()
