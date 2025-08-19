@@ -12,19 +12,30 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false)
 
-  useEffect(() => {
-    async function fetchUnread() {
-      if (user) {
-        try {
-          const { data } = await api.get('/messages/unread-summary')
-          setHasUnreadMessages(data.unread && data.unread.length > 0)
-        } catch {}
-      } else {
-        setHasUnreadMessages(false)
-      }
+  // Refetch unread messages summary
+  const fetchUnread = async () => {
+    if (user) {
+      try {
+        const { data } = await api.get('/messages/unread-summary')
+        setHasUnreadMessages(data.unread && data.unread.length > 0)
+      } catch {}
+    } else {
+      setHasUnreadMessages(false)
     }
+  }
+
+  useEffect(() => {
     fetchUnread()
   }, [user])
+
+  useEffect(() => {
+    // Listen for messages-read event from Messages page
+    function handleRead() {
+      fetchUnread()
+    }
+    window.addEventListener('messages-read', handleRead)
+    return () => window.removeEventListener('messages-read', handleRead)
+  }, [])
 
   const toggleMenu = () => setMenuOpen((v) => !v)
 
